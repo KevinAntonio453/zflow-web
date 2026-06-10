@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
+import { environment } from '../../../environments/environment';
 
 /** Endpoints que NO deben llevar Authorization header. */
 const PUBLIC_PATH_SUFFIXES = [
@@ -19,6 +20,11 @@ const PUBLIC_PATH_SUFFIXES = [
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   const auth   = inject(AuthService);
   const router = inject(Router);
+
+  // Anteponer la URL de producción si corresponde
+  if (req.url.startsWith('/api/')) {
+    req = req.clone({ url: environment.apiUrl + req.url });
+  }
 
   const isPublic = PUBLIC_PATH_SUFFIXES.some(suffix => req.url.endsWith(suffix));
   const token    = auth.accessToken();
