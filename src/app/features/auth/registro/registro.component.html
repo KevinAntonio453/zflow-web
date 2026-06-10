@@ -1,0 +1,81 @@
+<div class="min-h-screen flex items-center justify-center bg-background p-4">
+  <div class="w-full max-w-md bg-surface rounded-card shadow-card p-6 md:p-8 border border-border">
+    <div class="text-center mb-6">
+      <div class="w-12 h-12 mx-auto rounded-button bg-accent-500 text-white flex items-center justify-center text-base font-bold mb-3">ZF</div>
+      <h1 class="text-2xl font-bold text-text-primary">Crear cuenta</h1>
+      <p class="text-sm text-text-secondary mt-1">Registrate como cliente para iniciar trámites</p>
+    </div>
+
+    @if (error(); as msg) {
+      <div class="mb-4 p-3 rounded-input border border-danger text-sm text-danger bg-danger/10" role="alert">
+        {{ msg }}
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <div class="space-y-4">
+        <div>
+          <label for="nombre" class="block text-sm font-medium mb-1">Nombre completo</label>
+          <input
+            id="nombre"
+            type="text"
+            formControlName="nombre"
+            autocomplete="name"
+            class="w-full px-3 py-2 rounded-input border border-border bg-surface focus:outline-none focus:ring-2 focus:ring-primary-500"
+            [class.border-danger]="form.controls.nombre.touched && form.controls.nombre.invalid"
+          />
+          @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
+            <p class="text-xs text-danger mt-1">Mínimo 2 caracteres.</p>
+          }
+        </div>
+
+        <div>
+          <label for="email" class="block text-sm font-medium mb-1">Email</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            autocomplete="email"
+            class="w-full px-3 py-2 rounded-input border border-border bg-surface focus:outline-none focus:ring-2 focus:ring-primary-500"
+            [class.border-danger]="form.controls.email.touched && form.controls.email.invalid"
+          />
+          @if (form.controls.email.touched && form.controls.email.invalid) {
+            <p class="text-xs text-danger mt-1">Ingresá un email válido.</p>
+          }
+        </div>
+
+        <div>
+          <label for="password" class="block text-sm font-medium mb-1">Contraseña</label>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            autocomplete="new-password"
+            class="w-full px-3 py-2 rounded-input border border-border bg-surface focus:outline-none focus:ring-2 focus:ring-primary-500"
+            [class.border-danger]="form.controls.password.touched && form.controls.password.invalid"
+          />
+          @if (form.controls.password.touched && form.controls.password.invalid) {
+            <p class="text-xs text-danger mt-1">Mínimo 8 caracteres.</p>
+          }
+        </div>
+
+        <button
+          type="submit"
+          [disabled]="loading() || form.invalid"
+          class="w-full py-2 px-4 rounded-button bg-accent-500 text-white font-medium hover:bg-accent-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          @if (loading()) {
+            <zf-loading-spinner size="sm" />
+          } @else {
+            Crear cuenta
+          }
+        </button>
+      </div>
+    </form>
+
+    <p class="mt-6 text-center text-sm text-text-secondary">
+      ¿Ya tenés cuenta?
+      <a routerLink="/auth/login" class="text-primary-600 hover:text-primary-700 font-medium">Iniciá sesión</a>
+    </p>
+  </div>
+</div>

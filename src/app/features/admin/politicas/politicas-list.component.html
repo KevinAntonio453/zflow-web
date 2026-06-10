@@ -1,0 +1,111 @@
+<div class="space-y-4">
+  <div class="flex items-center justify-between flex-wrap gap-2">
+    <div>
+      <h1 class="text-2xl font-bold">Políticas</h1>
+      <p class="text-sm text-text-secondary">Diseños de flujo con actividades y formularios embebidos.</p>
+    </div>
+    <a
+      routerLink="/admin/politicas/nueva"
+      class="bg-primary-500 text-white px-4 py-2 rounded-button hover:bg-primary-600"
+    >
+      + Nueva política
+    </a>
+  </div>
+
+  <!-- Filtros -->
+  <div class="flex items-center gap-2 text-sm">
+    <span class="text-text-secondary">Filtrar:</span>
+    @for (opt of filtros; track opt.value) {
+      <button
+        type="button"
+        (click)="changeFiltro(opt.value)"
+        [class]="(filtro() === opt.value)
+          ? 'px-3 py-1 rounded-button bg-primary-500 text-white'
+          : 'px-3 py-1 rounded-button bg-surface border border-border hover:bg-primary-50 dark:hover:bg-primary-900/40'"
+      >
+        {{ opt.label }}
+      </button>
+    }
+  </div>
+
+  @if (error(); as msg) {
+    <div class="p-3 rounded-input border border-danger text-sm text-danger bg-danger/10" role="alert">
+      {{ msg }}
+    </div>
+  }
+
+  @if (loading()) {
+    <zf-loading-spinner size="lg" />
+  } @else {
+    <div class="bg-surface border border-border rounded-card overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="bg-background text-text-secondary">
+          <tr>
+            <th class="text-left p-3 font-medium">Nombre</th>
+            <th class="text-left p-3 font-medium">Estado</th>
+            <th class="text-left p-3 font-medium">Actividades</th>
+            <th class="text-left p-3 font-medium">Actualizada</th>
+            <th class="text-right p-3 font-medium">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of filtered(); track p.id) {
+            <tr class="border-t border-border hover:bg-primary-50/30 dark:hover:bg-primary-900/20">
+              <td class="p-3">
+                <div class="font-medium">{{ p.nombre }}</div>
+                @if (p.descripcion) {
+                  <div class="text-xs text-text-secondary line-clamp-1">{{ p.descripcion }}</div>
+                }
+              </td>
+              <td class="p-3">
+                <span
+                  [class]="(p.estado === 'ACTIVA')
+                    ? 'inline-block px-2 py-0.5 text-xs rounded-badge bg-accent-100 text-accent-700'
+                    : (p.estado === 'BORRADOR')
+                      ? 'inline-block px-2 py-0.5 text-xs rounded-badge bg-warning/20 text-warning'
+                      : 'inline-block px-2 py-0.5 text-xs rounded-badge bg-border text-text-secondary'"
+                >
+                  {{ estadoLabel(p.estado) }}
+                </span>
+              </td>
+              <td class="p-3 text-text-secondary">{{ p.actividades.length }}</td>
+              <td class="p-3 text-text-secondary">{{ formatDate(p.updatedAt) }}</td>
+              <td class="p-3 text-right space-x-1">
+                <button
+                  type="button"
+                  (click)="edit(p)"
+                  class="px-2 py-1 text-xs rounded-button hover:bg-primary-50 dark:hover:bg-primary-900/40"
+                >
+                  Editar
+                </button>
+                @if (p.estado !== 'ACTIVA') {
+                  <button
+                    type="button"
+                    (click)="activate(p)"
+                    class="px-2 py-1 text-xs rounded-button text-accent-700 hover:bg-accent-100"
+                  >
+                    Activar
+                  </button>
+                } @else {
+                  <button
+                    type="button"
+                    (click)="deactivate(p)"
+                    class="px-2 py-1 text-xs rounded-button text-text-secondary hover:bg-border"
+                  >
+                    Desactivar
+                  </button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="p-8 text-center text-text-secondary">
+                No hay políticas que coincidan con el filtro.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
